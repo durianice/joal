@@ -129,7 +129,7 @@ public class ConnectionHandler {
         // Bind to the first available port in the range
         ServerSocketChannel channel = null;
 
-        for (int port = ConnectionHandler.PORT_RANGE_START; port <= ConnectionHandler.PORT_RANGE_END; port++) {
+        for (int port : getRandomPorts(ConnectionHandler.PORT_RANGE_START, ConnectionHandler.PORT_RANGE_END)) {
             final InetSocketAddress tryAddress = new InetSocketAddress(port);
 
             try {
@@ -152,6 +152,12 @@ public class ConnectionHandler {
             throw new IOException("No available port for the BitTorrent client!");
         }
         return channel;
+    }
+
+    private List<Integer> getRandomPorts(int start, int end) {
+        List<Integer> ports = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+        Collections.shuffle(ports);
+        return ports;
     }
 
     public void close() {
